@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { userRepo } from "../../../repositories/userRepo";
 
 type User = {
   id: number;
@@ -28,8 +27,7 @@ const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
     switch (method) {
       case "GET":
         // Get data from your database
-        const user = await userRepo.getOne(id);
-        res.status(200).json(user);
+        res.status(200).json("user");
         break;
       case "POST":
         // Update or create data in your database
