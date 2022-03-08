@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { prisma } from "../_app";
 
 type User = {
   id: number;
@@ -12,7 +13,7 @@ const sampleUserData: User[] = [
   { id: 104, name: "Dave" },
 ];
 
-const handler = (_req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
   try {
     const {
       query: { id, name },
@@ -27,7 +28,9 @@ const handler = (_req: NextApiRequest, res: NextApiResponse) => {
     switch (method) {
       case "GET":
         // Get data from your database
-        res.status(200).json(sampleUserData);
+        const allUsers = await prisma.user.findMany();
+        console.log(allUsers);
+        res.status(200).json(allUsers);
         break;
       case "POST":
         // Update or create data in your database

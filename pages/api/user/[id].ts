@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { prisma } from "../../_app";
 
 type User = {
   id: number;
@@ -31,7 +32,19 @@ const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
         break;
       case "POST":
         // Update or create data in your database
-        res.status(200).json({ result: "success" });
+        const user = await prisma.user.create({
+          data: {
+            name: "Alice",
+            email: "alice@prisma.io",
+            posts: {
+              create: { title: "Hello World" },
+            },
+            profile: {
+              create: { bio: "I like turtles" },
+            },
+          },
+        });
+        res.status(200).json({ result: user });
         break;
       default:
         res.setHeader("Allow", ["GET", "POST"]);
