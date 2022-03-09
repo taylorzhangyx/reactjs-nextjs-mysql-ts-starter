@@ -1,27 +1,16 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { User } from "../../../models/User";
 import { prisma } from "../../_app";
-
-type User = {
-  id: number;
-  name: string;
-};
-
-const sampleUserData: User[] = [
-  { id: 101, name: "Alice" },
-  { id: 102, name: "Bob" },
-  { id: 103, name: "Caroline" },
-  { id: 104, name: "Dave" },
-];
 
 const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
   try {
     const {
-      query: { id, name },
-      body: users,
+      query: { id },
+      body: user,
       method,
     } = _req;
 
-    if (Array.isArray(id) || Array.isArray(name)) {
+    if (Array.isArray(id)) {
       throw new Error("only take id and name as string not array");
     }
 
@@ -33,22 +22,8 @@ const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
         });
         res.status(200).json(matchUser);
         break;
-      case "POST":
-        // Update or create data in your database
-        const user = await prisma.user.create({
-          data: {
-            name: "Alice",
-            email: "alice@prisma.io",
-            posts: {
-              create: { title: "Hello World" },
-            },
-            profile: {
-              create: { bio: "I like turtles" },
-            },
-          },
-        });
-        res.status(200).json({ result: user });
-        break;
+      case "PUT":
+
       default:
         res.setHeader("Allow", ["GET", "POST"]);
         res.status(405).end(`Method ${method} Not Allowed`);

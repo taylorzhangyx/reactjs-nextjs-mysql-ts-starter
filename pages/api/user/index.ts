@@ -1,14 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "../_app";
-
-type User = {
-  id: number;
-  name: string;
-};
+import { User } from "../../../models/User";
+import { prisma } from "../../_app";
 
 const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const { method } = _req;
+    const { body: user, method } = _req;
 
     switch (method) {
       case "GET":
@@ -16,8 +12,19 @@ const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
         const users = await prisma.user.findMany();
         res.status(200).json(users);
         break;
+      case "POST":
+        const postUser = user as User;
+        // Update or create data in your database
+        const newUser = await prisma.user.create({
+          data: {
+            name: postUser.name,
+            email: postUser.email,
+          },
+        });
+        res.status(200).json({ result: newUser });
+        break;
       default:
-        res.setHeader("Allow", ["GET"]);
+        res.setHeader("Allow", ["GET", "POST"]);
         res.status(405).end(`Method ${method} Not Allowed`);
     }
   } catch (err: any) {
