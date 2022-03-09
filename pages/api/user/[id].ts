@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { User } from "../../../models/User";
 import { prisma } from "../../_app";
 
 const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
@@ -23,7 +22,23 @@ const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
         res.status(200).json(matchUser);
         break;
       case "PUT":
-
+        // update the given user with id
+        const upsertUser = await prisma.user.upsert({
+          where: {
+            id: +id,
+          },
+          update: {
+            name: user.name,
+            email: user.email,
+          },
+          create: {
+            id: +id,
+            name: user.name,
+            email: user.email,
+          },
+        });
+        res.status(200).json(upsertUser);
+        break;
       default:
         res.setHeader("Allow", ["GET", "POST"]);
         res.status(405).end(`Method ${method} Not Allowed`);
