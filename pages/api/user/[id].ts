@@ -28,7 +28,10 @@ const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
     switch (method) {
       case "GET":
         // Get data from your database
-        res.status(200).json("user");
+        const matchUser = await prisma.user.findUnique({
+          where: { id: +id },
+        });
+        res.status(200).json(matchUser);
         break;
       case "POST":
         // Update or create data in your database
