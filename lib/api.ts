@@ -14,13 +14,21 @@ export function getPostBySlug(slug: string, fields: string[] = []) {
   const fileContents = fs.readFileSync(fullPath, "utf8");
   const { data, content } = matter(fileContents);
 
-  type Items = {
-    [key: string]: string;
-  };
-
-  const items: Items = {};
-
   // Ensure only the minimal needed data is exposed
+  return makeItems(fields, realSlug, content, data);
+}
+
+export type Items = {
+  [key: string]: string;
+};
+
+function makeItems(
+  fields: string[],
+  realSlug: string,
+  content: string,
+  data: { [key: string]: any }
+): Items {
+  const items: Items = {};
   fields.forEach((field) => {
     if (field === "slug") {
       items[field] = realSlug;
@@ -33,7 +41,6 @@ export function getPostBySlug(slug: string, fields: string[] = []) {
       items[field] = data[field];
     }
   });
-
   return items;
 }
 
